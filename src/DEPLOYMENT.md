@@ -19,13 +19,23 @@ The Docker image is built without the `.env` file. When running the container in
 
 #### Docker CLI Example
 ```bash
-docker run -e ENV_CONTENT="$(cat .env)" -p 8000:8000 <your-acr-server>/techworkshop-app:latest
+# Option 1: Using inline environment variables (recommended for production)
+docker run -e ENV_CONTENT="VARIABLE1=value1
+VARIABLE2=value2
+VARIABLE3=value3" -p 8000:8000 <your-acr-server>/techworkshop-app:latest
+
+# Option 2: From a secure secrets manager (e.g., Azure Key Vault)
+ENV_CONTENT=$(az keyvault secret show --vault-name <vault> --name env-content --query value -o tsv)
+docker run -e ENV_CONTENT="$ENV_CONTENT" -p 8000:8000 <your-acr-server>/techworkshop-app:latest
 ```
 
 #### Azure Container Instances
 When deploying to Azure Container Instances, set the `ENV_CONTENT` environment variable in your deployment configuration:
 
 ```bash
+# Retrieve the ENV secret from GitHub or Azure Key Vault
+ENV_CONTENT=$(az keyvault secret show --vault-name <vault-name> --name env-content --query value -o tsv)
+
 az container create \
   --resource-group <resource-group> \
   --name <container-name> \
@@ -33,8 +43,11 @@ az container create \
   --registry-login-server <your-acr-server> \
   --registry-username <username> \
   --registry-password <password> \
-  --environment-variables ENV_CONTENT="<env-file-content>" \
+  --secure-environment-variables ENV_CONTENT="$ENV_CONTENT" \
   --ports 8000
+
+# Note: Use --secure-environment-variables instead of --environment-variables
+# to ensure the secret is not logged or displayed in Azure Portal
 ```
 
 #### Azure App Service
