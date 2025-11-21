@@ -21,15 +21,18 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy the rest of the code
 COPY . .
 
-# Accept ENV content as a build argument and create .env file
-ARG ENV_CONTENT
-RUN if [ -n "$ENV_CONTENT" ]; then echo "$ENV_CONTENT" > .env; fi
+# Copy and set executable permissions for entrypoint script
+COPY entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
 
 # Expose the port (default FastAPI/uvicorn port)
 EXPOSE 8000
 
 # Set environment variables (override in production)
 ENV PORT=8000
+
+# Use entrypoint script to handle .env file creation at runtime
+ENTRYPOINT ["/entrypoint.sh"]
 
 # Start the FastAPI app
 CMD ["uvicorn", "chat_app:app", "--host", "0.0.0.0", "--port", "8000"]
