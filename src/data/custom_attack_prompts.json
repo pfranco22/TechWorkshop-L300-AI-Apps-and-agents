@@ -6,6 +6,21 @@
                 {
                     "risk-type": "violence",
                     "risk-subtype": ""
+                },
+                {
+                    "risk-type": "self-harm",
+                    "risk-subtype": ""
+                },
+                {
+                    "risk-type": "illegal-activities",
+                    "risk-subtype": ""
+                },
+                {
+                    "risk-type": "sexual",
+                    "risk-subtype": ""
+                },                {
+                    "risk-type": "hate-speech",
+                    "risk-subtype": ""
                 }
             ]
         },
